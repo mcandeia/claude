@@ -19,11 +19,6 @@ RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg \
     && apt-get update && apt-get install -y gh \
     && rm -rf /var/lib/apt/lists/*
 
-# Install ttyd for WebSocket PTY server
-RUN curl -fsSL -o /usr/local/bin/ttyd \
-    https://github.com/tsl0922/ttyd/releases/download/1.7.7/ttyd.$(dpkg --print-architecture) \
-    && chmod +x /usr/local/bin/ttyd
-
 # Install Claude Code CLI
 RUN npm install -g @anthropic-ai/claude-code
 
@@ -34,15 +29,12 @@ RUN mkdir -p /home/node/.claude /home/node/.ssh /home/node/workspace \
 USER node
 WORKDIR /home/node/workspace
 
-ENV HOME=/home/node \
-    CLAUDE_PTY_PORT=7681
+ENV HOME=/home/node
 
 # Copy configuration
 COPY --chown=node:node CLAUDE.md /home/node/.claude/CLAUDE.md
 COPY --chown=node:node settings.json /home/node/.claude/settings.json
 COPY --chown=node:node skills/ /home/node/.claude/skills/
 COPY --chown=node:node entrypoint.sh /usr/local/bin/entrypoint
-
-EXPOSE 7681
 
 ENTRYPOINT ["/usr/local/bin/entrypoint"]
