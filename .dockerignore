@@ -1,0 +1,4 @@
+.git
+*.md
+!CLAUDE.md
+LICENSE
